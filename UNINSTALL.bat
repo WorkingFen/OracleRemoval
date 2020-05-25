@@ -17,26 +17,44 @@ for %%a in (%$line%) do (
 )
 set $newpath=!$newpath:#= !
 set $newpath=!$newpath:^^=!
-echo !$newpath:~1!
 :: echo set path=!$newpath:~1!
 exit /b 0
 
 :: Remove Oracle's registries
 :RemoveOracleRegs
 for /f "usebackq" %%i in (`reg query HKLM\SOFTWARE\ORACLE /K /F ora`) do (
-	echo %%i
+	echo %%i | find /i "End" >nul || echo %%i
 )
-echo "Hi"
+:: reg delete %%i /f >nul
+
+for /f "usebackq" %%i in (`reg query HKLM\SOFTWARE\ORACLE /K /C /F ODP`) do (
+	echo %%i | find /i "End" >nul || echo %%i
+)
+:: reg delete %%i /f >nul
+
+for /f "usebackq" %%i in (`reg query HKLM\SYSTEM\CurrentControlSet\Services /K /C /F ORCL`) do (
+	echo %%i | find /i "End" >nul || echo %%i
+)
+:: reg delete %%i /f >nul
+
+for /f "usebackq" %%i in (`reg query HKLM\SYSTEM\CurrentControlSet\Services /K /C /F OraDB`) do (
+	echo %%i | find /i "End" >nul || echo %%i
+)
+:: reg delete %%i /f >nul
 exit /b 0
 
 :: Remove Oracle's main directory
 : RemoveOracleMainDir
-echo "Hey"
+:: rmdir /Q /S %dir:~0,7%
 exit /b 0
 
 :: Remove Oracle's start menu directory
 : RemoveOracleMenuDir
-echo "Hello"
+set menuDir=C:\ProgramData\Microsoft\Windows\Start Menu\Programs\
+for /f "usebackq delims=" %%i in (`dir "%menuDir%" /A:D /B ^| find "OraDB" `) do (
+	echo %menu_dir%%%i
+)
+:: rmdir /Q /S %menu_dir%%%i
 exit /b 0
 
 :: Open computer management to delete manually all additional users
