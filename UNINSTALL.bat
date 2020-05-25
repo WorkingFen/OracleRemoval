@@ -21,35 +21,38 @@ echo !$newpath:~1!
 :: echo set path=!$newpath:~1!
 exit /b 0
 
-:: Remove Oracle Registries
+:: Remove Oracle's registries
 :RemoveOracleRegs
 echo "Hi"
 exit /b 0
+
+:: Remove Oracle's 
 
 :: Resume script's work
 :resume
 if exist "%~dp0script.or" (
 	set /p current=<"%~dp0script.or"
-)
-else (
+) else (
 	set current=first
 )
-
 exit /b 0
 
 :: First section which will be executed
 :first
 reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v "%~n0" /d "%~dpnx0" /f
-echo last >"%~dp0current.or"
+echo last >"%~dp0script.or"
 call :RemoveOracleEnvVariable
 call :RemoveOracleRegs
 pause
-shutdown -r -t 0
+:: shutdown -r -t 0
 exit /b 0
 
 :: Last section which will be executed
 :last
-reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v %~n0 /f
-del "%~dp0current.or"
+reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v "%~n0" /f
+del "%~dp0script.or"
+call :RemoveOracleMainDir
+call :RemoveOracleStartDir
+call :OpenUsers
 pause
 exit /b 0
